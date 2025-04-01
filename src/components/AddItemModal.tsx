@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStock } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -18,6 +20,7 @@ interface AddItemModalProps {
 
 const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
   const { categories, addItem } = useStock();
+  const isMobile = useIsMobile();
   
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -149,12 +152,18 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
               <SelectTrigger className={errors.category_id ? "border-destructive" : ""}>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
+              <SelectContent position={isMobile ? "popper" : "item-aligned"} className="max-h-[40vh]">
+                <ScrollArea className="h-[40vh] md:h-[300px]">
+                  {categories.map((category) => (
+                    <SelectItem 
+                      key={category.id} 
+                      value={category.id}
+                      className="py-3"
+                    >
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </ScrollArea>
               </SelectContent>
             </Select>
             {errors.category_id && (
