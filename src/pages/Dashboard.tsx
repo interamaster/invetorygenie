@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Plus, WifiOff, ArrowLeft } from "lucide-react";
@@ -17,7 +16,7 @@ import { useSwipeGesture } from "@/hooks/use-swipe-gesture";
 
 const Dashboard: React.FC = () => {
   const { user, isAuthenticated, loading } = useAuth();
-  const { filteredItems, isSyncing, selectedCategory, setSelectedCategory, categories } = useStock();
+  const { filteredItems, isSyncing, selectedCategory, setSelectedCategory, categories, addCategory } = useStock();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   
@@ -26,6 +25,8 @@ const Dashboard: React.FC = () => {
   const [showItemsScreen, setShowItemsScreen] = useState(false);
   const [swipeTransition, setSwipeTransition] = useState(0); // State for swipe transition (0-1)
   const [isSwipeComplete, setIsSwipeComplete] = useState(false); // Track if swipe is complete
+  const [showAddCategoryDialog, setShowAddCategoryDialog] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
   
   const contentRef = useRef<HTMLDivElement>(null);
   const categoriesRef = useRef<HTMLDivElement>(null);
@@ -110,6 +111,16 @@ const Dashboard: React.FC = () => {
       setShowItemsScreen(true);
     }
   };
+
+  const handleAddCategory = async () => {
+    if (newCategoryName.trim()) {
+      await addCategory(newCategoryName);
+      setNewCategoryName("");
+      setShowAddCategoryDialog(false);
+    } else {
+      toast.error("Category name cannot be empty");
+    }
+  };
   
   if (loading) {
     return (
@@ -159,11 +170,11 @@ const Dashboard: React.FC = () => {
                   )}
                   
                   <Button
-                    onClick={() => setShowAddModal(true)}
+                    onClick={() => setShowAddCategoryDialog(true)}
                     className="ml-auto flex items-center gap-2"
                   >
                     <Plus className="h-4 w-4" />
-                    <span>Add Item2</span>
+                    <span>Add Category</span>
                   </Button>
                 </div>
               </div>
@@ -211,11 +222,11 @@ const Dashboard: React.FC = () => {
                     )}
                     
                     <Button
-                      onClick={() => setShowAddModal(true)}
+                      onClick={() => setShowAddCategoryDialog(true)}
                       className="ml-auto flex items-center gap-2"
                     >
                       <Plus className="h-4 w-4" />
-                      <span>Add Item</span>
+                      <span>Add Category</span>
                     </Button>
                   </div>
                 </div>
@@ -290,6 +301,32 @@ const Dashboard: React.FC = () => {
         </div>
         
         <AddItemModal isOpen={showAddModal} onClose={() => setShowAddModal(false)} />
+        
+        {/* Add Category Dialog */}
+        <div className={`fixed inset-0 z-50 bg-black/50 flex items-center justify-center transition-opacity ${
+          showAddCategoryDialog ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}>
+          <div className="bg-background rounded-lg w-[90%] max-w-md p-6 shadow-lg">
+            <h3 className="text-lg font-semibold mb-4">Add New Category</h3>
+            <p className="text-muted-foreground text-sm mb-4">
+              Create a new category to organize your stock items.
+            </p>
+            <input
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="Category name"
+              className="w-full border border-input rounded-md px-3 py-2 mb-4"
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowAddCategoryDialog(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleAddCategory}>
+                Add Category
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -329,8 +366,8 @@ const Dashboard: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4 min-h-[calc(100vh-160px)]">
-          <div className="bg-muted/30 rounded-lg border h-[calc(100vh-160px)]"> {/* Added fixed height */}
-            <ScrollArea className="h-full"> {/* Added ScrollArea with full height */}
+          <div className="bg-muted/30 rounded-lg border h-[calc(100vh-160px)]">
+            <ScrollArea className="h-full">
               <div className="p-4">
                 <CategoryList onSelectCategory={handleCategorySelect} />
               </div>
