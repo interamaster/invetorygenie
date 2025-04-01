@@ -7,13 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useStock } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
-import { useIsMobile } from "@/hooks/use-mobile";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -22,7 +18,6 @@ interface AddItemModalProps {
 
 const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
   const { categories, addItem } = useStock();
-  const isMobile = useIsMobile();
   
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -70,11 +65,13 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
         
+        // Check file type
         if (!file.type.startsWith("image/")) {
           toast.error(`${file.name} is not an image`);
           continue;
         }
         
+        // Check file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
           toast.error(`${file.name} is too large (max 5MB)`);
           continue;
@@ -119,11 +116,6 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
     }
   };
   
-  const getCategoryName = (id: string) => {
-    const category = categories.find(cat => cat.id === id);
-    return category ? category.name : "Select a category";
-  };
-  
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
@@ -149,59 +141,22 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            {isMobile ? (
-              <div className="relative">
-                <Button 
-                  variant="outline" 
-                  className={`w-full justify-between text-left font-normal ${errors.category_id ? "border-destructive" : ""}`}
-                  onClick={() => {
-                    // This is a dummy button that will be replaced by the dropdown
-                  }}
-                >
-                  {getCategoryName(category_id)}
-                  <span className="opacity-50">▼</span>
-                </Button>
-                
-                <div className={`absolute top-full left-0 w-full mt-1 rounded-md border border-input bg-background shadow-md z-50 ${category_id ? "hidden" : ""}`}>
-                  <ScrollArea className="h-[40vh]">
-                    <div className="p-1">
-                      {categories.map((category) => (
-                        <Button
-                          key={category.id}
-                          variant="ghost"
-                          className={`w-full justify-start font-normal py-3 ${category_id === category.id ? "bg-accent text-accent-foreground" : ""}`}
-                          onClick={() => {
-                            setCategoryId(category.id);
-                            if (errors.category_id) {
-                              setErrors({ ...errors, category_id: "" });
-                            }
-                          }}
-                        >
-                          {category.name}
-                        </Button>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                </div>
-              </div>
-            ) : (
-              <Select
-                value={category_id}
-                onValueChange={setCategoryId}
-                disabled={isLoading}
-              >
-                <SelectTrigger className={errors.category_id ? "border-destructive" : ""}>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+            <Select
+              value={category_id}
+              onValueChange={setCategoryId}
+              disabled={isLoading}
+            >
+              <SelectTrigger className={errors.category_id ? "border-destructive" : ""}>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {errors.category_id && (
               <p className="text-destructive text-sm">{errors.category_id}</p>
             )}
