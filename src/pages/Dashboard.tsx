@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, Plus, WifiOff, ArrowLeft } from "lucide-react";
+import { Loader2, Plus, WifiOff, ArrowLeft, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../context/AuthContext";
 import { useStock } from "../context/StockContext";
@@ -15,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSwipeGesture } from "@/hooks/use-swipe-gesture";
 
 const Dashboard: React.FC = () => {
-  const { user, isAuthenticated, loading } = useAuth();
+  const { user, isAuthenticated, loading, signOut } = useAuth();
   const { filteredItems, isSyncing, selectedCategory, setSelectedCategory, categories, addCategory } = useStock();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -121,6 +122,10 @@ const Dashboard: React.FC = () => {
       toast.error("Category name cannot be empty");
     }
   };
+
+  const handleLogout = async () => {
+    await signOut();
+  };
   
   if (loading) {
     return (
@@ -137,13 +142,16 @@ const Dashboard: React.FC = () => {
   if (isMobile) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <Navbar />
+        {/* Navbar only visible on non-mobile */}
+        <div className="hidden md:block">
+          <Navbar />
+        </div>
         
         <div className="relative flex-1 overflow-hidden">
           {/* Categories Screen (underneath) */}
           <div 
             ref={categoriesRef}
-            className={`absolute inset-0 z-0 pt-16 pb-6 px-4 container mx-auto ${swipeTransition > 0 ? 'visible' : 'invisible'}`}
+            className={`absolute inset-0 z-0 pt-4 pb-6 px-4 container mx-auto ${swipeTransition > 0 ? 'visible' : 'invisible'}`}
             style={{
               transform: `translateX(${-30 + (swipeTransition * 30)}%)`,
               opacity: swipeTransition * 0.9 + 0.1,
@@ -169,13 +177,24 @@ const Dashboard: React.FC = () => {
                     </div>
                   )}
                   
-                  <Button
-                    onClick={() => setShowAddCategoryDialog(true)}
-                    className="ml-auto flex items-center gap-2"
-                  >
-                    <Plus className="h-4 w-4" />
-                    <span>Add Category</span>
-                  </Button>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() => setShowAddCategoryDialog(true)}
+                      variant="default"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      <span>Add</span>
+                    </Button>
+                    
+                    <Button
+                      onClick={handleLogout}
+                      variant="outline"
+                      size="icon"
+                      className="rounded-full"
+                    >
+                      <LogOut className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </div>
               
@@ -192,7 +211,7 @@ const Dashboard: React.FC = () => {
           {/* Items Screen (top layer) */}
           <div 
             ref={contentRef}
-            className="absolute inset-0 z-10 pt-16 pb-6 px-4 container mx-auto"
+            className="absolute inset-0 z-10 pt-4 pb-6 px-4 container mx-auto"
             style={{
               transform: isSwipeComplete ? 'translateX(100%)' : `translateX(${swipeTransition * 100}%)`,
               transition: swipeTransition === 0 && !isSwipeComplete 
@@ -204,7 +223,7 @@ const Dashboard: React.FC = () => {
             {!showItemsScreen ? (
               <div className="flex flex-col h-[calc(100vh-105px)]">
                 <div className="flex items-center justify-between mb-6 mt-6">
-                  <h1 className="text-2xl font-bold">Categorias</h1>
+                  <h1 className="text-2xl font-bold">Categories</h1>
                   
                   <div className="flex items-center gap-2">
                     {!isOnline && (
@@ -221,13 +240,24 @@ const Dashboard: React.FC = () => {
                       </div>
                     )}
                     
-                    <Button
-                      onClick={() => setShowAddCategoryDialog(true)}
-                      className="ml-auto flex items-center gap-2"
-                    >
-                      <Plus className="h-4 w-4" />
-                      <span>Add Category</span>
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() => setShowAddCategoryDialog(true)}
+                        variant="default"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        <span>Add</span>
+                      </Button>
+                      
+                      <Button
+                        onClick={handleLogout}
+                        variant="outline"
+                        size="icon"
+                        className="rounded-full"
+                      >
+                        <LogOut className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 
