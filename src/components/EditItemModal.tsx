@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { X, Upload, Loader2, Image } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStock, StockItem } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
@@ -152,30 +154,40 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) 
           <div className="space-y-2">
             <Label htmlFor="edit-category">Category</Label>
             {isMobile ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className={`w-full justify-between text-left font-normal ${errors.category_id ? "border-destructive" : ""}`}
-                  >
-                    {getCategoryName(category_id)}
-                    <span className="opacity-50">▼</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-full max-h-[60vh] overflow-auto">
-                  <DropdownMenuRadioGroup value={category_id} onValueChange={setCategoryId}>
-                    {categories.map((category) => (
-                      <DropdownMenuRadioItem 
-                        key={category.id} 
-                        value={category.id}
-                        className="py-3"
-                      >
-                        {category.name}
-                      </DropdownMenuRadioItem>
-                    ))}
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="relative">
+                <Button 
+                  variant="outline" 
+                  className={`w-full justify-between text-left font-normal ${errors.category_id ? "border-destructive" : ""}`}
+                  onClick={() => {
+                    // This is a dummy button that will be replaced by the dropdown
+                  }}
+                >
+                  {getCategoryName(category_id)}
+                  <span className="opacity-50">▼</span>
+                </Button>
+                
+                <div className={`absolute top-full left-0 w-full mt-1 rounded-md border border-input bg-background shadow-md z-50 ${category_id ? "hidden" : ""}`}>
+                  <ScrollArea className="h-[40vh]">
+                    <div className="p-1">
+                      {categories.map((category) => (
+                        <Button
+                          key={category.id}
+                          variant="ghost"
+                          className={`w-full justify-start font-normal py-3 ${category_id === category.id ? "bg-accent text-accent-foreground" : ""}`}
+                          onClick={() => {
+                            setCategoryId(category.id);
+                            if (errors.category_id) {
+                              setErrors({ ...errors, category_id: "" });
+                            }
+                          }}
+                        >
+                          {category.name}
+                        </Button>
+                      ))}
+                    </div>
+                  </ScrollArea>
+                </div>
+              </div>
             ) : (
               <Select
                 value={category_id}
