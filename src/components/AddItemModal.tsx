@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { X, Upload, Loader2, Image } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -8,10 +7,12 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useStock } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -68,13 +69,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
       for (let i = 0; i < e.target.files.length; i++) {
         const file = e.target.files[i];
         
-        // Check file type
         if (!file.type.startsWith("image/")) {
           toast.error(`${file.name} is not an image`);
           continue;
         }
         
-        // Check file size (max 5MB)
         if (file.size > 5 * 1024 * 1024) {
           toast.error(`${file.name} is too large (max 5MB)`);
           continue;
@@ -119,6 +118,11 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
     }
   };
   
+  const getCategoryName = (id: string) => {
+    const category = categories.find(cat => cat.id === id);
+    return category ? category.name : "Select a category";
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
@@ -144,28 +148,49 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
           
           <div className="space-y-2">
             <Label htmlFor="category">Category</Label>
-            <Select
-              value={category_id}
-              onValueChange={setCategoryId}
-              disabled={isLoading}
-            >
-              <SelectTrigger className={errors.category_id ? "border-destructive" : ""}>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent position={isMobile ? "popper" : "item-aligned"} className="max-h-[40vh]">
-                <ScrollArea className="h-[40vh] md:h-[300px]">
+            {isMobile ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className={`w-full justify-between text-left font-normal ${errors.category_id ? "border-destructive" : ""}`}
+                  >
+                    {getCategoryName(category_id)}
+                    <span className="opacity-50">▼</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full max-h-[60vh] overflow-auto">
+                  <DropdownMenuRadioGroup value={category_id} onValueChange={setCategoryId}>
+                    {categories.map((category) => (
+                      <DropdownMenuRadioItem 
+                        key={category.id} 
+                        value={category.id}
+                        className="py-3"
+                      >
+                        {category.name}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Select
+                value={category_id}
+                onValueChange={setCategoryId}
+                disabled={isLoading}
+              >
+                <SelectTrigger className={errors.category_id ? "border-destructive" : ""}>
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
                   {categories.map((category) => (
-                    <SelectItem 
-                      key={category.id} 
-                      value={category.id}
-                      className="py-3"
-                    >
+                    <SelectItem key={category.id} value={category.id}>
                       {category.name}
                     </SelectItem>
                   ))}
-                </ScrollArea>
-              </SelectContent>
-            </Select>
+                </SelectContent>
+              </Select>
+            )}
             {errors.category_id && (
               <p className="text-destructive text-sm">{errors.category_id}</p>
             )}

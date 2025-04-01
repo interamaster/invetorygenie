@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { X, Upload, Loader2, Image } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -10,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useStock, StockItem } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 interface EditItemModalProps {
   item: StockItem;
@@ -19,6 +20,7 @@ interface EditItemModalProps {
 
 const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) => {
   const { categories, updateItem } = useStock();
+  const isMobile = useIsMobile();
   
   const [name, setName] = useState(item.name);
   const [description, setDescription] = useState(item.description);
@@ -119,6 +121,11 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) 
     }
   };
   
+  const getCategoryName = (id: string) => {
+    const category = categories.find(cat => cat.id === id);
+    return category ? category.name : "Select a category";
+  };
+  
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
@@ -144,25 +151,52 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) 
           
           <div className="space-y-2">
             <Label htmlFor="edit-category">Category</Label>
-            <Select
-              value={category_id}
-              onValueChange={setCategoryId}
-              disabled={isLoading}
-            >
-              <SelectTrigger 
-                id="edit-category"
-                className={errors.category_id ? "border-destructive" : ""}
+            {isMobile ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className={`w-full justify-between text-left font-normal ${errors.category_id ? "border-destructive" : ""}`}
+                  >
+                    {getCategoryName(category_id)}
+                    <span className="opacity-50">▼</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-full max-h-[60vh] overflow-auto">
+                  <DropdownMenuRadioGroup value={category_id} onValueChange={setCategoryId}>
+                    {categories.map((category) => (
+                      <DropdownMenuRadioItem 
+                        key={category.id} 
+                        value={category.id}
+                        className="py-3"
+                      >
+                        {category.name}
+                      </DropdownMenuRadioItem>
+                    ))}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Select
+                value={category_id}
+                onValueChange={setCategoryId}
+                disabled={isLoading}
               >
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+                <SelectTrigger 
+                  id="edit-category"
+                  className={errors.category_id ? "border-destructive" : ""}
+                >
+                  <SelectValue placeholder="Select a category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             {errors.category_id && (
               <p className="text-destructive text-sm">{errors.category_id}</p>
             )}
