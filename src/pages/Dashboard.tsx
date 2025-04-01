@@ -336,23 +336,43 @@ const Dashboard: React.FC = () => {
         <div className={`fixed inset-0 z-50 bg-black/50 flex items-center justify-center transition-opacity ${
           showAddCategoryDialog ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}>
-          <div className="bg-background rounded-lg w-[90%] max-w-md p-6 shadow-lg">
-            <h3 className="text-lg font-semibold mb-4">Add New Category</h3>
-            <p className="text-muted-foreground text-sm mb-4">
-              Create a new category to organize your stock items.
-            </p>
+          <div className="bg-background rounded-3xl w-[90%] max-w-md p-8 shadow-lg relative">
+            {/* Close button */}
+            <button 
+              onClick={() => setShowAddCategoryDialog(false)}
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="text-2xl mb-2">🔥🔥🔥</div>
+              <h3 className="text-xl font-semibold mb-2">NEW CATEGORY</h3>
+              <p className="text-muted-foreground text-sm">
+                Create a new category to organize your stock items and keep track of your inventory.
+              </p>
+            </div>
+
             <input
               value={newCategoryName}
               onChange={(e) => setNewCategoryName(e.target.value)}
               placeholder="Category name"
-              className="w-full border border-input rounded-md px-3 py-2 mb-4"
+              className="w-full border border-input rounded-lg px-4 py-3 mb-6"
             />
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setShowAddCategoryDialog(false)}>
-                Cancel
+
+            <div className="flex flex-col gap-3">
+              <Button 
+                onClick={handleAddCategory}
+                className="w-full py-6 text-base font-semibold rounded-xl"
+              >
+                OK
               </Button>
-              <Button onClick={handleAddCategory}>
-                Add Category
+              <Button 
+                variant="outline" 
+                onClick={() => setShowAddCategoryDialog(false)}
+                className="w-full py-6 text-base font-semibold rounded-xl"
+              >
+                NOOOOLLL!!!
               </Button>
             </div>
           </div>
