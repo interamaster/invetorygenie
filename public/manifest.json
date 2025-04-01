@@ -1,0 +1,32 @@
+
+{
+  "name": "StockGenius",
+  "short_name": "StockGenius",
+  "description": "Professional inventory management system",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9fafb",
+  "theme_color": "#3b82f6",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add New Item",
+      "url": "/?action=add",
+      "description": "Add a new item to inventory"
+    }
+  ]
+}
