@@ -146,35 +146,22 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
           
           <div className="space-y-2">
             <Label htmlFor="category" className="text-sm font-medium">Category</Label>
-            <Select
-              value={category_id}
-              onValueChange={setCategoryId}
-              disabled={isLoading}
-            >
-              <SelectTrigger className={cn(
-                "transition-all duration-200",
-                errors.category_id ? "border-destructive" : ""
-              )}>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent className="h-[200px]">
-                <ScrollArea className="h-full">
-                  <div className="p-2 space-y-1">
-                    {categories.map((category) => (
-                      <SelectItem 
-                        key={category.id} 
-                        value={category.id}
-                        className="rounded-md px-2 py-2.5 hover:bg-accent/50 cursor-pointer transition-colors"
-                      >
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setCategoryId(category.id)}
+                  className={`p-2 rounded-md transition-colors ${
+                    category_id === category.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                  } hover:bg-blue-500 active:bg-blue-700`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
             {errors.category_id && (
-              <p className="text-destructive text-sm mt-1">{errors.category_id}</p>
+              <p className="text-destructive text-sm">{errors.category_id}</p>
             )}
           </div>
           

@@ -144,25 +144,20 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) 
           
           <div className="space-y-2">
             <Label htmlFor="edit-category">Category</Label>
-            <Select
-              value={category_id}
-              onValueChange={setCategoryId}
-              disabled={isLoading}
-            >
-              <SelectTrigger 
-                id="edit-category"
-                className={errors.category_id ? "border-destructive" : ""}
-              >
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="grid grid-cols-2 gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setCategoryId(category.id)}
+                  className={`p-2 rounded-md transition-colors ${
+                    category_id === category.id ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
+                  } hover:bg-blue-500 active:bg-blue-700`}
+                >
+                  {category.name}
+                </button>
+              ))}
+            </div>
             {errors.category_id && (
               <p className="text-destructive text-sm">{errors.category_id}</p>
             )}
