@@ -157,14 +157,14 @@ const AddItemModal: React.FC<AddItemModalProps> = ({ isOpen, onClose }) => {
               )}>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent className="h-[200px]">
-                <ScrollArea className="h-full">
+              <SelectContent className="max-h-[200px]">
+                <ScrollArea className="h-[200px] touch-auto overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
                   <div className="p-2 space-y-1">
                     {categories.map((category) => (
                       <SelectItem 
                         key={category.id} 
                         value={category.id}
-                        className="rounded-md px-2 py-2.5 hover:bg-accent/50 cursor-pointer transition-colors"
+                        className="rounded-md px-2 py-3 hover:bg-accent/50 cursor-pointer transition-colors"
                       >
                         {category.name}
                       </SelectItem>
