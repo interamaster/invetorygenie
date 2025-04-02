@@ -38,7 +38,7 @@ const ItemCard: React.FC<ItemCardProps> = ({ item }) => {
             <div className="flex justify-between items-start mb-2">
               <div>
                 <h3 className="font-semibold text-lg leading-tight mb-1">{item.name}</h3>
-                <div className="inline-block bg-primary/10 text-primary-foreground/90 text-xs px-2 py-1 rounded-sm mb-2">
+                <div className="inline-block bg-primary/80 text-primary-foreground/90 text-xs px-2 py-1 rounded-sm mb-2">
                   {category?.name || "Uncategorized"}
                 </div>
               </div>

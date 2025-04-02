@@ -388,7 +388,7 @@ const Dashboard: React.FC = () => {
       
       <div className="flex-1 container mx-auto pt-16 pb-6 px-4">
         <div className="flex items-center justify-between mb-6 mt-6">
-          <h1 className="text-2xl font-bold">Inventory</h1>
+          <h1 className="text-2xl font-bold">Inventario</h1>
           
           <div className="flex items-center gap-2">
             {!isOnline && (
@@ -424,7 +424,7 @@ const Dashboard: React.FC = () => {
             </ScrollArea>
           </div>
           
-          <div className="bg-background rounded-lg border p-4 flex flex-col">
+          <div className="bg-background rounded-lg border p-4 flex flex-col h-[calc(100vh-160px)]">
             <div className="mb-4">
               <SearchBar />
             </div>
@@ -449,13 +449,13 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 overflow-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <ScrollArea className="flex-1 -mx-4 px-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-0.5">
                   {filteredItems.map((item) => (
                     <ItemCard key={item.id} item={item} />
                   ))}
                 </div>
-              </div>
+              </ScrollArea>
             )}
           </div>
         </div>
