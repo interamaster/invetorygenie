@@ -7,11 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useStock, StockItem } from "../context/StockContext";
 import { fileToDataUrl } from "../utils/imageCompression";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 interface EditItemModalProps {
   item: StockItem;
@@ -153,27 +151,16 @@ const EditItemModal: React.FC<EditItemModalProps> = ({ item, isOpen, onClose }) 
             >
               <SelectTrigger 
                 id="edit-category"
-                className={cn(
-                  "transition-all duration-200",
-                  errors.category_id ? "border-destructive" : ""
-                )}
+                className={errors.category_id ? "border-destructive" : ""}
               >
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
-              <SelectContent className="max-h-[200px]">
-                <ScrollArea className="h-[200px] touch-auto overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
-                  <div className="p-2 space-y-1">
-                    {categories.map((category) => (
-                      <SelectItem 
-                        key={category.id} 
-                        value={category.id}
-                        className="rounded-md px-2 py-3 hover:bg-accent/50 cursor-pointer transition-colors"
-                      >
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </div>
-                </ScrollArea>
+              <SelectContent>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {errors.category_id && (
