@@ -65,7 +65,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
 
     
         {chartData.length > 0 && (
-          <div className="h-12 mt-">   
+          <div className="h-120 mt-">   
             <ChartContainer config={{}} className="h-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart

@@ -59,7 +59,7 @@ const Navbar: React.FC = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="/" className="flex items-center space-x-3">
           <span className="self-center text-xl font-semibold whitespace-nowrap">
-            StockGenius
+            ALMACEN SEVILLA (C)JRDV 2025
           </span>
         </a>
 
